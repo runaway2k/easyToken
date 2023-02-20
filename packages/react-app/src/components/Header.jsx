@@ -5,7 +5,7 @@ import React from "react";
 
 export default function Header() {
   return (
-    <a href="https://github.com/austintgriffith/scaffold-eth" target="_blank" rel="noopener noreferrer">
+    <a href="https://github.com/runaway2k/easyToken/" target="_blank" rel="noopener noreferrer">
       <PageHeader
         title="easyToken DEX"
         subTitle="a first intent of Automated Market Make to trade Ballons and ETH tokens"
