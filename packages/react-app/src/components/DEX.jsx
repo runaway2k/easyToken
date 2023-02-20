@@ -69,7 +69,7 @@ export default function Dex(props) {
   if (props.readContracts && props.readContracts[contractName]) {
     display.push(
       <div>
-        {rowForm("ethToToken", "💸", async value => {
+        {rowForm("ETH To Balloons", "💸 buy", async value => {
           let valueInEther = ethers.utils.parseEther("" + value);
           let valuePlusExtra = ethers.utils.parseEther("" + value * 1.03);
           console.log("valuePlusExtra", valuePlusExtra);
@@ -77,7 +77,7 @@ export default function Dex(props) {
           console.log("swapEthToTokenResult:", swapEthToTokenResult);
         })}
 
-        {rowForm("tokenToEth", "🔏", async value => {
+        {rowForm("Balloons To Eth", "🔏 sell", async value => {
           let valueInEther = ethers.utils.parseEther("" + value);
           console.log("valueInEther", valueInEther);
           let valuePlusExtra = ethers.utils.parseEther("" + value * 1.03);
@@ -109,7 +109,7 @@ export default function Dex(props) {
 
         <Divider> Liquidity ({liquidity ? ethers.utils.formatEther(liquidity) : "none"}):</Divider>
 
-        {rowForm("deposit", "📥", async value => {
+        {rowForm("Add Liquidity", "Deposit 📥 ", async value => {
           let valueInEther = ethers.utils.parseEther("" + value);
           let allowance = await props.readContracts[tokenName].allowance(
             props.address,
@@ -126,7 +126,7 @@ export default function Dex(props) {
           await tx(writeContracts[contractName]["deposit"]({ value: valueInEther, gasLimit: 200000 }));
         })}
 
-        {rowForm("withdraw", "📤", async value => {
+        {rowForm("Rem Liquidity ", "Withdraw 📤 ", async value => {
           let valueInEther = ethers.utils.parseEther("" + value);
           let withdrawTxResult = await tx(writeContracts[contractName]["withdraw"](valueInEther));
           console.log("withdrawTxResult:", withdrawTxResult);
@@ -136,8 +136,9 @@ export default function Dex(props) {
   }
 
   return (
-    <Row span={24}>
-      <Col span={12}>
+    <div style={{ width: 600, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+    <Row >
+      <Col >
         <Card
           title={
             <div>
@@ -153,7 +154,7 @@ export default function Dex(props) {
         >
           {display}
         </Card>
-        <Row span={12}>
+        <Row >
           <Contract
             name="Balloons"
             signer={props.signer}
@@ -164,8 +165,29 @@ export default function Dex(props) {
             contractConfig={props.contractConfig}
           />
         </Row>
+        <Row>
+          <Col  style={{ textAlign: "right", opacity: 0.333, paddingRight: 6, paddingTop:30, fontSize: 24 }}>
+            Price Model Graph
+          </Col>
+        </Row>
+        <Row>
+          <Col  style={{ textAlign: "right", opacity: 0.333, paddingRight: 6, fontSize: 16 }}>
+            Blue point = amount of ETH in DEX by amount of Balloons in DEX
+          </Col>
+        </Row>
+        
+        <Row>
+          <Curve
+              addingEth={values && values["ethToToken"] ? values["ethToToken"] : 0}
+              addingToken={values && values["tokenToEth"] ? values["tokenToEth"] : 0}
+              ethReserve={ethBalanceFloat}
+              tokenReserve={tokenBalanceFloat}
+              width={500}
+              height={500}
+            />
+        </Row>
       </Col>
-      <Col span={12}>
+      {/* <Col span={12}>
         <div style={{ padding: 20 }}>
           <Curve
             addingEth={values && values["ethToToken"] ? values["ethToToken"] : 0}
@@ -176,7 +198,8 @@ export default function Dex(props) {
             height={500}
           />
         </div>
-      </Col>
+      </Col> */}
     </Row>
+    </div>
   );
 }
